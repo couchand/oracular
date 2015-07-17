@@ -4,6 +4,7 @@ React = require 'react'
 
 {
   div, h1, h2
+  ul, li, a
 } = React.DOM
 
 table = React.createFactory require './table'
@@ -28,10 +29,43 @@ module.exports = React.createClass
 
       h1
         className: "title"
-        "Configuration"
+        a
+          name: "configuration"
+          href: "#configuration"
+          "Configuration"
 
-      h2 {}, "Tables"
+      ul {},
+        li {},
+          a
+            href: "#tables"
+            "Tables"
+          ul {},
+            @state.config.tables.map (t) ->
+              li key: t.key,
+                a
+                  href: "#table-#{t.table.toLowerCase()}"
+                  t.table
+        li {},
+          a
+            href: "#specs"
+            "Specs"
+          ul {},
+            @state.config.specs.map (s) ->
+              li key: s.key,
+                a
+                  href: "#spec-#{s.name.toLowerCase()}"
+                  s.name
+
+      h2 {},
+        a
+          name: "tables"
+          href: "#tables"
+          "Tables"
       @state.config.tables.map table
 
-      h2 {}, "Specs"
+      h2 {},
+        a
+          name: "specs"
+          href: "#specs"
+          "Specs"
       @state.config.specs.map spec

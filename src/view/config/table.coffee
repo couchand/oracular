@@ -27,8 +27,8 @@ module.exports = React.createClass
       h2
         className: "name"
         a
-          name: @props.table
-          href: "##{@props.table}"
+          name: "table-#{@props.table.toLowerCase()}"
+          href: "#table-#{@props.table.toLowerCase()}"
           @props.table
 
       table

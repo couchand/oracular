@@ -71,11 +71,14 @@ module.exports = React.createClass
       className: "specs"
 
       h4 {},
-        @props.name
+        a
+          name: "spec-#{@props.name.toLowerCase()}"
+          href: "#spec-#{@props.name.toLowerCase()}"
+          @props.name
         small {},
           " on "
           a
-            href: '#' + @props.table
+            href: "#table-#{@props.table.toLowerCase()}"
             @props.table
 
       textarea
