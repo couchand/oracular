@@ -12,6 +12,14 @@ module.exports = (grunt) ->
         dest: 'build'
         ext: '.js'
 
+      examples:
+        expand: yes
+        flatten: no
+        cwd: 'examples'
+        src: ['**/*.coffee']
+        dest: 'www'
+        ext: '.js'
+
     browserify:
       build:
         src: ['build/app.js']
