@@ -15,22 +15,35 @@ module.exports = React.createClass
     initialConfig: React.PropTypes.object
 
   getInitialState: ->
-    config: JSON.stringify @props.initialConfig or tables: [], specs: [], null, 2
+    initial = @props.initialConfig or tables: [], specs: []
+    config = JSON.stringify initial, null, 2
+
+    {
+      config
+      parsed: initial
+    }
 
   updateConfig: (config) ->
-    @setState {config}
+    @parse config
+
+  parse: (config) ->
+    config ?= @state.config
+
+    try
+      parsed = JSON.parse config
+    catch e
+      return @setState {config}
+
+    @setState {parsed, config}
 
   shouldComponentUpdate: ->
-    try
-      JSON.parse @state.config
-      return yes
-    catch e
-      return no
+    string = JSON.stringify @state.parsed
+
+    yes
 
   render: ->
-    config = JSON.parse @state.config
-    tableresults = loadTables config.tables
-    specresults = loadSpecs tableresults.tables, config.specs
+    tableresults = loadTables @state.parsed.tables
+    specresults = loadSpecs tableresults.tables, @state.parsed.specs
 
     if tableresults.errors?.length
       console.error err.toString(), err.config for err in tableresults.errors
