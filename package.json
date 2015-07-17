@@ -4,7 +4,7 @@
   "description": "a query builder",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha"
+    "test": "node_modules/mocha/bin/mocha --reporter spec"
   },
   "author": "Andrew Couch <oracular@andrewcou.ch>",
   "license": "MIT",
