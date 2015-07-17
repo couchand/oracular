@@ -22,7 +22,7 @@ module.exports = (grunt) ->
 
     browserify:
       build:
-        src: ['build/app.js']
+        src: ['build/client.js']
         dest: 'www/script.js'
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
