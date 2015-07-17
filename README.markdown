@@ -9,6 +9,7 @@ a query builder
     * tables
     * specs
     * specification language
+  * lowering
 
 intro
 -----
@@ -220,10 +221,37 @@ specs = [
   {
     name: 'managersWithCustomers'
     table: 'User'
-    spec: 'isManager(User) AND ANY(Account.Owner = User AND isCustomer(Account))'
+    spec: 'isManager(User) AND ANY(isCustomer(Account))'
   }
 ]
 ```
 
-This way we can break down the business logic into little testable bits,
-and query each of them live while developing rules to assist debugging.
+This way we can break down the business logic into little testable bits.
+As you can see, the joins are automatically made based on the defined
+relationships.  It is an error to define on a table more than one parent
+relationship to any given table.
+
+lowering
+--------
+
+In the example `ANY(isCustomer(Account))`, the query is built by
+checking the `Account` table for a parent relationship to the root of
+the current query, the `User` table.  One is indeed found, the `Owner`
+relationship based on `OwnerId`, so the join is performed on that field.
+Thus, it could be lowered to the following SQL:
+
+```sql
+SELECT u.Id
+FROM User u
+LEFT JOIN Account a ON a.OwnerId = u.Id
+WHERE
+  u.Type = 'Manager'
+AND
+  a.Type = 'Customer'
+GROUP By u.Id
+```
+
+The result being all the Accounts in the database that match the spec.
+By lowering the spec to SQL we can use specs for batch processing and
+scheduled tasks, and we can also use it to assist in development, by
+showing the records matching a spec right in the interface.
