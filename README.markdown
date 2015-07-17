@@ -11,6 +11,8 @@ a query builder
     * specification language
   * lowering
 
+[![Build Status](https://travis-ci.org/couchand/oracular.svg?branch=master)](https://travis-ci.org/couchand/oracular)
+
 intro
 -----
 
