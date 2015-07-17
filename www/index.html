@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Oracular</title>
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      render(
+        document.getElementById('app'),
+        {
+          "tables": [
+            {
+              "table": "Account",
+              "parents": [
+                { "name": "Owner", "table": "User" }
+              ],
+              "fields": [
+                { "name": "Id" },
+                { "name": "OwnerId" },
+                { "name": "Type" }
+              ]
+            },
+            {
+              "table": "Opportunity",
+              "parents": [
+                { "name": "Account" },
+                { "name": "Owner", "table": "User" }
+              ],
+              "fields": [
+                { "name": "Id" },
+                { "name": "AccountId" },
+                { "name": "OwnerId" },
+                { "name": "Type" },
+                { "name": "IsClosed", "type": "bool" },
+                { "name": "Amount", "type": "number" },
+                { "name": "CloseDate", "type": "date" }
+              ]
+            },
+            {
+              "table": "User",
+              "fields": [
+                { "name": "Id" },
+                { "name": "Type" }
+              ]
+            }
+          ],
+          "specs": [
+            {
+              "name": "needsCustomerUpdate",
+              "table": "Account",
+              "spec": "Account.Type = 'Prospect' AND ANY(Opportunity.IsClosed)"
+            },
+            {
+              "name": "hasRecentDeal",
+              "table": "Account",
+              "spec": "TODAY - LAST(Opportunity.CloseDate, Opportunity.IsClosed) < 60"
+            },
+            {
+              "name": "managerCustomer",
+              "table": "Account",
+              "spec": "Account.Type = 'Customer' AND Account.Owner.Type = 'Manager'"
+            },
+            {
+              "name": "proveOperatorPrecedence",
+              "table": "Account",
+              "spec": "Account.Type = 'Customer' AND Account.Type = 'Past Customer' OR Account.Owner.Type = 'Manager'"
+            },
+            {
+              "name": "specWithTableError",
+              "table": "Account2",
+              "spec": "Account.Type = 'Customer'"
+            },
+            {
+              "name": "specWithRootError",
+              "table": "Account",
+              "spec": "User.Type = 'Manager'"
+            },
+            {
+              "name": "specWithFieldError",
+              "table": "Account",
+              "spec": "Account.Foobar = 'Customer'"
+            }
+          ]
+        }
+      );
+    </script>
+  </body>
+</html>
