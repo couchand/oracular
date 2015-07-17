@@ -36,11 +36,6 @@ module.exports = React.createClass
 
     @setState {parsed, config}
 
-  shouldComponentUpdate: ->
-    string = JSON.stringify @state.parsed
-
-    yes
-
   render: ->
     tableresults = loadTables @state.parsed.tables
     specresults = loadSpecs tableresults.tables, @state.parsed.specs
