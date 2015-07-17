@@ -5,26 +5,26 @@
 @example.errors =
   tables: [
     {
-      table: "Foobar",
+      table: "Foobar"
       fields: [
-        { name: "Id" },
+        { name: "Id" }
       ]
-    },
-  ],
+    }
+  ]
   specs: [
     {
-      name: "specWithTableError",
-      table: "Account",
+      name: "specWithTableError"
+      table: "Account"
       spec: "Account.Type = 'Customer'"
-    },
+    }
     {
-      name: "specWithRootError",
-      table: "Foobar",
+      name: "specWithRootError"
+      table: "Foobar"
       spec: "User.Type = 'Manager'"
-    },
+    }
     {
-      name: "specWithFieldError",
-      table: "Foobar",
+      name: "specWithFieldError"
+      table: "Foobar"
       spec: "Foobar.Type = 'Customer'"
     }
   ]
