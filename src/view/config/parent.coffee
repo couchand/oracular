@@ -30,5 +30,5 @@ module.exports = React.createClass
       td
         className: "table"
         a
-          href: "##{@props.table}"
+          href: "#table-#{@props.table.toLowerCase()}"
           @props.table
