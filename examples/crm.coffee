@@ -59,20 +59,5 @@
       name: "proveOperatorPrecedence",
       table: "Account",
       spec: "Account.Type = 'Customer' AND Account.Type = 'Past Customer' OR Account.Owner.Type = 'Manager'"
-    },
-    {
-      name: "specWithTableError",
-      table: "Account2",
-      spec: "Account.Type = 'Customer'"
-    },
-    {
-      name: "specWithRootError",
-      table: "Account",
-      spec: "User.Type = 'Manager'"
-    },
-    {
-      name: "specWithFieldError",
-      table: "Account",
-      spec: "Account.Foobar = 'Customer'"
     }
   ]
