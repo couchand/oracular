@@ -106,6 +106,13 @@ The spec configuration objects have three properties: `name`, the name
 to use to refer to the spec; `table`, the root table of the spec; and
 `spec`, the actual specification expression itself.
 
+```coffeescript
+isCustomerSpec =
+  name: 'isCustomer'
+  table: 'Account'
+  spec: 'Account.Type = "Customer"'
+```
+
 The specification language deserves a section of its own.
 
 ### specification language
@@ -146,7 +153,7 @@ TODAY - Account.CreatedDate < 30
 ```
 
 Building on top of this are logical operations on specs: conjunction
-(`AND`), disjunction (`OR`) and negation (`NOT()`).  For example,
+`AND`, disjunction `OR` and negation `NOT()`.  For example,
 
 ```coffeescript
 # not a customer
@@ -165,8 +172,9 @@ Account.Owner.Type = "Manager"
 ```
 
 The most complicated type of expression is a reduction over the child
-objects.  These come in a few flavors: predicates: `ANY()`, `ALL()`,
-and `NONE()`.  The expression contained within performs a join over
+objects.  These come in a few flavors: the predicates `ANY()`, `ALL()`,
+and `NONE()`, and the reducers `FIRST()`, `LAST()`, `LARGEST()`, and
+`SMALLEST()`.  The expression contained within performs a join over
 the child records.  Just reference the child record table as if it were
 a root of an expression, and make sure that you include the join
 criteria.  For instance, doing a query over the user table that account
@@ -175,12 +183,22 @@ points to:
 ```coffeescript
 # manager with a customer
 User.Type = "Manager" AND ANY(Account.Owner = User AND Account.Type = "Customer")
+
+# customer with recent deals
+Account.Type = "Customer"
+  AND
+TODAY - LAST(Opportunity.CloseDate, Opportunity.IsClosed) < 60
+
+# customers with big deals
+Account.Type = "Customer"
+  AND
+LARGEST(Opportunity.Amount, Opportunity.IsClosed) > 100000
 ```
 
 If this were the only tool we had our specifications would grow large
 quickly -- business logic tends to be pretty messy.  Fortunately, we
-have a tool of abstraction.  Since every spec has a name in the config,
-you can refer to specs within other specs.  For instance, we could define:
+also have a tool for abstraction: since every spec has a name, you can
+refer to one spec from another.  For instance, we could define:
 
 ```coffeescript
 specs = [
