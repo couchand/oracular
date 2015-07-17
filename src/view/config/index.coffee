@@ -5,6 +5,7 @@ React = require 'react'
 {
   div, h1, h2
   ul, li, a
+  textarea
 } = React.DOM
 
 table = React.createFactory require './table'
@@ -16,12 +17,11 @@ module.exports = React.createClass
 
   propTypes:
     config: React.PropTypes.object.isRequired
+    configSource: React.PropTypes.string.isRequired
+    updateConfig: React.PropTypes.func.isRequired
 
-  getInitialState: ->
-    config: @props.config
-
-  updateConfig: (config) ->
-    @setState {config}
+  handleUpdate: (target: {value: config}) ->
+    @props.updateConfig config
 
   render: ->
     div
@@ -40,7 +40,7 @@ module.exports = React.createClass
             href: "#tables"
             "Tables"
           ul {},
-            @state.config.tables.map (t) ->
+            @props.config.tables.map (t) ->
               li key: t.key,
                 a
                   href: "#table-#{t.table.toLowerCase()}"
@@ -50,22 +50,28 @@ module.exports = React.createClass
             href: "#specs"
             "Specs"
           ul {},
-            @state.config.specs.map (s) ->
+            @props.config.specs.map (s) ->
               li key: s.key,
                 a
                   href: "#spec-#{s.name.toLowerCase()}"
                   s.name
+
+      textarea
+        rows: 12
+        cols: 80
+        value: @props.configSource
+        onChange: @handleUpdate
 
       h2 {},
         a
           name: "tables"
           href: "#tables"
           "Tables"
-      @state.config.tables.map table
+      @props.config.tables.map table
 
       h2 {},
         a
           name: "specs"
           href: "#specs"
           "Specs"
-      @state.config.specs.map spec
+      @props.config.specs.map spec

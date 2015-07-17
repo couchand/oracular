@@ -15,17 +15,31 @@ module.exports = React.createClass
     initialConfig: React.PropTypes.object
 
   getInitialState: ->
-    config: @props.initialConfig or tables: [], specs: []
+    config: JSON.stringify @props.initialConfig or tables: [], specs: [], null, 2
+
+  updateConfig: (config) ->
+    @setState {config}
+
+  shouldComponentUpdate: ->
+    try
+      JSON.parse @state.config
+      return yes
+    catch e
+      return no
 
   render: ->
-    tableresults = loadTables @state.config.tables
-    specresults = loadSpecs tableresults.tables, @state.config.specs
+    config = JSON.parse @state.config
+    tableresults = loadTables config.tables
+    specresults = loadSpecs tableresults.tables, config.specs
 
     if tableresults.errors?.length
       console.error err.toString(), err.config for err in tableresults.errors
     if specresults.errors?.length
       console.error err.toString(), err.config for err in specresults.errors
 
-    configView config: configure
-      tables: tableresults.tables
-      specs: specresults.specs
+    configView
+      config: configure
+        tables: tableresults.tables
+        specs: specresults.specs
+      configSource: @state.config
+      updateConfig: @updateConfig
