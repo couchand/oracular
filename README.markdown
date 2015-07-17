@@ -255,3 +255,5 @@ The result being all the Accounts in the database that match the spec.
 By lowering the spec to SQL we can use specs for batch processing and
 scheduled tasks, and we can also use it to assist in development, by
 showing the records matching a spec right in the interface.
+
+##### ╭╮☲☲☲╭╮ #####
