@@ -59,10 +59,10 @@ validateExpression = (root, tables, node) ->
       else
         validateExpression(root, tables, node.left) or
           validateExpression root, tables, node.right
-    when node instanceof Node.AndSpecification
+    when node instanceof Node.LogicalConjunction
       validateExpression(root, tables, node.left) or
         validateExpression root, tables, node.right
-    when node instanceof Node.OrSpecification
+    when node instanceof Node.LogicalDisjunction
       validateExpression(root, tables, node.left) or
         validateExpression root, tables, node.right
     when node instanceof Node.FunctionCall

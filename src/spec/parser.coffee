@@ -53,9 +53,9 @@ class Parser
       rhs = @parseBinary rhs
 
     if /^and$/i.test op
-      new Node.AndSpecification lhs, rhs
+      new Node.LogicalConjunction lhs, rhs
     else if /^or$/i.test op
-      new Node.OrSpecification lhs, rhs
+      new Node.LogicalDisjunction lhs, rhs
     else
       new Node.BinaryOperation lhs, op, rhs
 

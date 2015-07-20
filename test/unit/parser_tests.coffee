@@ -231,7 +231,7 @@ describe 'Parser', ->
 
         tree = me.parse()
 
-        tree.should.be.an.instanceof Node.AndSpecification
+        tree.should.be.an.instanceof Node.LogicalConjunction
         tree.should.have.property 'left'
           .that.is.an.instanceof Node.BoolLiteral
         tree.should.have.property 'right'
@@ -251,7 +251,7 @@ describe 'Parser', ->
 
         tree = me.parse()
 
-        tree.should.be.an.instanceof Node.OrSpecification
+        tree.should.be.an.instanceof Node.LogicalDisjunction
         tree.should.have.property 'left'
           .that.is.an.instanceof Node.BoolLiteral
         tree.should.have.property 'right'
@@ -286,13 +286,13 @@ describe 'Parser', ->
         leftTree = left.parse()
         rightTree = right.parse()
 
-        leftTree.should.be.an.instanceof Node.OrSpecification
-        rightTree.should.be.an.instanceof Node.OrSpecification
+        leftTree.should.be.an.instanceof Node.LogicalDisjunction
+        rightTree.should.be.an.instanceof Node.LogicalDisjunction
 
         leftTree.should.have.property 'left'
-          .that.is.an.instanceof Node.AndSpecification
+          .that.is.an.instanceof Node.LogicalConjunction
         rightTree.should.have.property 'right'
-          .that.is.an.instanceof Node.AndSpecification
+          .that.is.an.instanceof Node.LogicalConjunction
 
       it 'parses function calls', ->
         me = parse [

@@ -29,14 +29,14 @@ renderNode = (node) ->
           li {}, renderNode node.left
           li {}, renderNode node.right
 
-    when node instanceof Node.AndSpecification
+    when node instanceof Node.LogicalConjunction
       div className: 'conjunction',
         "AND"
         ul {},
           li {}, renderNode node.left
           li {}, renderNode node.right
 
-    when node instanceof Node.OrSpecification
+    when node instanceof Node.LogicalDisjunction
       div className: 'disjunction',
         "OR"
         ul {},

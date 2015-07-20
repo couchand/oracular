@@ -61,13 +61,13 @@ class BinaryOperation
 class NotSpecification
   constructor: (@spec) ->
 
-class AndSpecification
+class LogicalConjunction
   constructor: (@left, @right) ->
 
   toString: ->
     "(#{@left.toString()} and #{@right.toString()})"
 
-class OrSpecification
+class LogicalDisjunction
   constructor: (@left, @right) ->
 
   toString: ->
@@ -90,8 +90,8 @@ module.exports = {
 
   BinaryOperation
   NotSpecification
-  AndSpecification
-  OrSpecification
+  LogicalConjunction
+  LogicalDisjunction
 
   FunctionCall
 
