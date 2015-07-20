@@ -97,6 +97,12 @@ describe 'StringLexer', ->
         me.getToken().should.be.a.token String, "''"
         me.getToken().should.be.a.token EOF
 
+      it 'lexes escaped backslashes', ->
+        me = new StringLexer "'\\\\'"
+
+        me.getToken().should.be.a.token String, '\\'
+        me.getToken().should.be.a.token EOF
+
       it 'lexes double-quoted escaped double-quotes', ->
         me = new StringLexer '"\\"\\""'
 

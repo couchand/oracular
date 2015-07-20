@@ -23,6 +23,7 @@ REFERENCE_RE = /^[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*$/
 OPEN_PAREN_RE = /^\($/
 CLOSE_PAREN_RE = /^\)$/
 COMMA_RE = /^,$/
+BACKSLASH_RE = /\\\\/g
 
 TokenType = require './token'
 Token = TokenType.Token
@@ -73,6 +74,7 @@ class StringLexer
 
       matcher = new RegExp '\\\\' + match[0], 'g'
       str = match[1...-1].replace matcher, match[0]
+      str = str.replace BACKSLASH_RE, '\\'
       return new Token TokenType.String, str
 
     if REFERENCE_RE.test match
