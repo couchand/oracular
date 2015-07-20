@@ -8,6 +8,9 @@ TokenType = require '../../src/spec/tokens'
 
 ArrayLexer = require '../array-lexer'
 
+parse = (input) ->
+  new Parser new ArrayLexer input
+
 string = (str) ->
   type: TokenType.String
   value: str
@@ -44,15 +47,14 @@ describe 'Parser', ->
   describe '#', ->
     describe 'parse', ->
       it 'is a function', ->
-        me = new Parser new ArrayLexer []
+        me = parse []
 
         me.should.have.property 'parse'
           .that.is.a 'function'
 
       it 'parses numbers', ->
-        me = new Parser new ArrayLexer [
-          type: TokenType.Number
-          value: 42
+        me = parse [
+          number 42
         ]
 
         tree = me.parse()
@@ -60,7 +62,7 @@ describe 'Parser', ->
         tree.should.be.an.instanceof Node.NumberLiteral
 
       it 'parses strings', ->
-        me = new Parser new ArrayLexer [
+        me = parse [
           string 'foobar'
         ]
 
@@ -78,7 +80,7 @@ describe 'Parser', ->
           .that.equals op
 
       checkBinary = (op) -> ->
-        me = new Parser new ArrayLexer [
+        me = parse [
           number 1
           operator op
           number 2
@@ -113,10 +115,10 @@ describe 'Parser', ->
         plus = operator '+'
         times = operator '*'
 
-        left = new Parser new ArrayLexer [
+        left = parse [
           one, equals, two, plus, three, times, four
         ]
-        right = new Parser new ArrayLexer [
+        right = parse [
           one, times, two, plus, three, equals, four
         ]
 
@@ -148,7 +150,7 @@ describe 'Parser', ->
         validateBinaryOperation rightTree, rightLeftSide, '=', isFour
 
       checkNull = (str) ->
-        me = new Parser new ArrayLexer [
+        me = parse [
           reference [str]
         ]
 
@@ -162,7 +164,7 @@ describe 'Parser', ->
         checkNull 'NuLl'
 
       checkBool = (str, val) ->
-        me = new Parser new ArrayLexer [
+        me = parse [
           reference [str]
         ]
 
@@ -182,7 +184,7 @@ describe 'Parser', ->
         checkBool 'fAlSe', no
 
       checkRef = (refs) ->
-        me = new Parser new ArrayLexer [
+        me = parse [
           reference [].concat refs
         ]
 
@@ -206,7 +208,7 @@ describe 'Parser', ->
         checkRef ['notnull']
 
       it 'throws on not enough input', ->
-        me = new Parser new ArrayLexer [
+        me = parse [
           number 42
           operator '+'
         ]
@@ -214,7 +216,7 @@ describe 'Parser', ->
         (-> me.parse()).should.throw /not enough/i
 
       it 'throws on too much input', ->
-        me = new Parser new ArrayLexer [
+        me = parse [
           number 42
           number 43
         ]
@@ -222,7 +224,7 @@ describe 'Parser', ->
         (-> me.parse()).should.throw /too much/i
 
       checkConjunction = (str) ->
-        me = new Parser new ArrayLexer [
+        me = parse [
           reference ['true']
           operator str
           reference ['true']
@@ -242,7 +244,7 @@ describe 'Parser', ->
         checkConjunction 'aND'
 
       checkDisjunction = (str) ->
-        me = new Parser new ArrayLexer [
+        me = parse [
           reference ['true']
           operator str
           reference ['true']
@@ -275,10 +277,10 @@ describe 'Parser', ->
         equal   = operator '='
         greater = operator '>'
 
-        left = new Parser new ArrayLexer [
+        left = parse [
           one, less, two, both, three, equal, four, either, five, greater, six
         ]
-        right = new Parser new ArrayLexer [
+        right = parse [
           one, less, two, either, three, equal, four, both, five, greater, six
         ]
 
@@ -294,7 +296,7 @@ describe 'Parser', ->
           .that.is.an.instanceof Node.AndSpecification
 
       it 'parses function calls', ->
-        me = new Parser new ArrayLexer [
+        me = parse [
           reference ['foobar']
           openParen
           reference ['baz']
