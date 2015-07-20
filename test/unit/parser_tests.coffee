@@ -76,8 +76,7 @@ describe 'Parser', ->
           .that.satisfy left
         tree.should.have.property 'right'
           .that.satisfy right
-        tree.should.have.property 'operator'
-          .that.equals op
+        tree.should.have.property 'operator', op
 
       checkBinary = (op) -> ->
         me = parse [
@@ -316,3 +315,23 @@ describe 'Parser', ->
         tree.should.have.deep.property 'parameters[1]'
           .that.is.an.instanceof Node.Reference
           .and.has.deep.property 'segments[0]', 'qux'
+
+      it 'parses parenthesized expressions', ->
+        me = parse [
+          number 1
+          operator '*'
+          openParen
+          number 1
+          operator '='
+          number 2
+          closeParen
+        ]
+
+        tree = me.parse()
+
+        tree.should.be.an.instanceof Node.BinaryOperation
+        tree.should.have.property 'operator', '*'
+
+        tree.should.have.property 'right'
+          .that.is.an.instanceof Node.BinaryOperation
+          .and.has.property 'operator', '='

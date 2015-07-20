@@ -109,6 +109,18 @@ class Parser
         else
           @parseReference()
 
+      when TokenType.OpenParen
+        @getNextToken() # consume open paren
+
+        tok = @parseKernel()
+
+        if @currentToken.type isnt TokenType.CloseParen
+          throw new Error "Too much input: #{@currentToken.toString()}"
+
+        @getNextToken() # consume close paren
+
+        tok
+
       else
         throw new Error "Case undefined: #{@currentToken.toString()}"
 
@@ -116,11 +128,16 @@ class Parser
 
     result
 
-  parse: ->
+  parseKernel: ->
     result = @parseCurrentToken()
 
     while @currentToken.type is TokenType.Operator
       result = @parseBinary result
+
+    result
+
+  parse: ->
+    result = @parseKernel()
 
     if @currentToken.type isnt TokenType.EOF
       throw new Error "Too much input: #{@currentToken.toString()}"
