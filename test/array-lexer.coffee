@@ -1,7 +1,6 @@
 # array lexer for tests
 
-{EOF} = require '../src/spec/tokens'
-Token = require '../src/spec/token'
+{EOF, Token} = require '../src/spec/token'
 
 class ArrayLexer
   constructor: (@tokens=[]) ->

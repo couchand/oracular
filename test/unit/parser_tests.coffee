@@ -4,7 +4,7 @@
 
 Node = require '../../src/spec/ast'
 Parser = require '../../src/spec/parser'
-TokenType = require '../../src/spec/tokens'
+TokenType = require '../../src/spec/token'
 
 ArrayLexer = require '../array-lexer'
 

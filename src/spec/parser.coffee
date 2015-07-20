@@ -2,7 +2,7 @@
 
 # expects a lexer which provides a getToken method
 
-TokenType = require './tokens'
+TokenType = require './token'
 Node = require './ast'
 
 PRECEDENCE =

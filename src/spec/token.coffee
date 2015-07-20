@@ -1,7 +1,17 @@
-# token class
+# lexer tokens
+
+module.exports = TOKENS =
+  EOF:        0
+  Reference:  1
+  String:     2
+  Number:     3
+  Operator:   4
+  OpenParen:  5
+  CloseParen: 6
+  Comma:      7
 
 types = []
-for name, type of require './tokens'
+for name, type of TOKENS
   types[type] = name
 
 class Token
@@ -10,4 +20,4 @@ class Token
   toString: ->
     "Token[#{types[@type]}]#{if @value then @value else ''}"
 
-module.exports = Token
+module.exports.Token = Token

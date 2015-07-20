@@ -24,8 +24,8 @@ OPEN_PAREN_RE = /^\($/
 CLOSE_PAREN_RE = /^\)$/
 COMMA_RE = /^,$/
 
-TokenType = require './tokens'
-Token = require './token'
+TokenType = require './token'
+Token = TokenType.Token
 
 class StringLexer
   constructor: (source='') ->

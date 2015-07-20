@@ -9,7 +9,7 @@
   EOF
   Operator, Number, String, Reference
   OpenParen, CloseParen, Comma
-} = require '../../src/spec/tokens'
+} = require '../../src/spec/token'
 StringLexer = require '../../src/spec/lexer'
 
 Assertion.addMethod 'token', (type, value) ->
