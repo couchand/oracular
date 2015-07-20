@@ -71,7 +71,7 @@ class Parser
     params = []
 
     loop
-      params.push @parseCurrentToken()
+      params.push @parseKernel()
 
       break if @currentToken.type is TokenType.CloseParen
 

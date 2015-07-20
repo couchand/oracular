@@ -316,6 +316,25 @@ describe 'Parser', ->
           .that.is.an.instanceof Node.Reference
           .and.has.deep.property 'segments[0]', 'qux'
 
+      it 'parses function calls with nested expressions', ->
+        me = parse [
+          reference ['foobar']
+          openParen
+          reference ['baz']
+          operator '+'
+          reference ['qux']
+          closeParen
+        ]
+
+        tree = me.parse()
+
+        tree.should.be.an.instanceof Node.FunctionCall
+        tree.should.have.property 'function'
+          .that.is.an.instanceof Node.Reference
+        tree.should.have.deep.property 'parameters[0]'
+          .that.is.an.instanceof Node.BinaryOperation
+          .and.has.property 'operator', '+'
+
       it 'parses parenthesized expressions', ->
         me = parse [
           number 1
