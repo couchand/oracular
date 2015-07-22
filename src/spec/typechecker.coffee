@@ -9,7 +9,7 @@ class TypeChecker
   constructor: (@config) ->
     @config ?= {}
     @config.tables ?= []
-    @config.spec ?= []
+    @config.specs ?= []
 
   hasTable: (needle) ->
     for table in @config.tables when table.table is needle
@@ -18,6 +18,15 @@ class TypeChecker
   getTable: (needle) ->
     for table in @config.tables when table.table is needle
       return table
+    null
+
+  hasSpec: (needle) ->
+    for spec in @config.specs when spec.name is needle
+      return yes
+
+  getSpec: (needle) ->
+    for spec in @config.specs when spec.name is needle
+      return spec
     null
 
   walkNullLiteral: ->
@@ -76,7 +85,12 @@ class TypeChecker
 
     root = segments[0]
     unless @hasTable root
-      throw new Error "typecheck error: table not found #{root}"
+      if segments.length is 1 and @hasSpec root
+        spec = @getSpec root
+        if spec
+          return TypeSpecifier.getFunction TypeSpecifier.boolean, [TypeSpecifier.getTable spec.table]
+
+      throw new Error "typecheck error: name not found #{root}"
 
     table = @getTable root
     if segments.length is 1
@@ -115,7 +129,7 @@ class TypeChecker
 
       parent = @getParent table, segments[0]
       if parent
-        return TypeSpecifier.getTable parent.table
+        return TypeSpecifier.getTable parent.table or parent.name
 
       throw new Error "typecheck error: field not found #{segments[0]}"
 
@@ -128,5 +142,18 @@ class TypeChecker
       throw new Error "typecheck error: parent table not found #{parentTableName}"
 
     @getFieldInTable parentTable, segments[1..]
+
+  walkFunctionCall: (fnTy, paramTys) ->
+    ps = fnTy.parameterTypes.length
+    as = paramTys.length
+    if ps isnt as
+      throw new Error "typecheck error: function called with the wrong number of parameters: expected #{ps}, got #{as}"
+
+    for i, p of fnTy.parameterTypes
+      coalesced = p.coalesce paramTys[+i]
+      unless coalesced
+        throw new Error "typecheck error: function argument type mismatch #{p.toString()} and #{paramTys[+i].toString()}"
+
+    fnTy.returnType
 
 module.exports = TypeChecker

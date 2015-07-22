@@ -110,6 +110,11 @@ class FunctionCall
     params = (param.toString() for param in @parameters)
     "#{@function.toString()}(#{params.join ', '})"
 
+  walk: (walker) ->
+    fn = @function.walk walker
+    params = (p.walk walker for p in @parameters)
+    walker.walkFunctionCall fn, params
+
 module.exports = {
   Reference
 

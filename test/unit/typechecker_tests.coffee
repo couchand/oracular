@@ -295,7 +295,7 @@ describe "TypeChecker", ->
     it "expects table to exist", ->
       ref = new Node.Reference ['Foobar', 'Test']
 
-      (-> ref.walk new TypeChecker()).should.throw /table/
+      (-> ref.walk new TypeChecker()).should.throw /name/
 
     it "expects field to exist", ->
       config =
@@ -343,3 +343,85 @@ describe "TypeChecker", ->
       ref = new Node.Reference ['Foobar', 'Parent', 'Test']
 
       (-> ref.walk new TypeChecker config).should.throw /field/
+
+  describe 'function call', ->
+    it 'expects spec to exist', ->
+      config =
+        tables: [
+          table: 'Foobar'
+          fields: [
+            name: 'Id'
+          ]
+        ]
+
+      fnCall = new Node.FunctionCall new Node.Reference(['isBaz']), [new Node.Reference ['Foobar']]
+
+      (-> fnCall.walk new TypeChecker config).should.throw /name/
+
+    it 'expects spec table to match input', ->
+      config =
+        tables: [
+          table: 'Foobar'
+          fields: [
+            name: 'Id'
+          ]
+        ]
+        specs: [
+          name: 'isBaz'
+          table: 'Baz'
+          spec: 'Baz.Name = "Foobar"'
+        ]
+
+      fnCall = new Node.FunctionCall new Node.Reference(['isBaz']), [new Node.Reference ['Foobar']]
+
+      (-> fnCall.walk new TypeChecker config).should.throw /mismatch/
+
+    it 'checks specs against a table', ->
+      config =
+        tables: [
+          table: 'Foobar'
+          fields: [
+            name: 'Id'
+          ]
+        ]
+        specs: [
+          name: 'isBaz'
+          table: 'Foobar'
+          spec: 'Foobar.Id != null'
+        ]
+
+      fnCall = new Node.FunctionCall new Node.Reference(['isBaz']), [new Node.Reference ['Foobar']]
+
+      checked = fnCall.walk new TypeChecker config
+
+      checked.should.have.property 'type', SpecType.Boolean
+
+    it 'checks specs against a parent table', ->
+      config =
+        tables: [
+          {
+            table: 'Foobar'
+            fields: [
+              { name: 'Id' }
+              { name: 'ParentId' }
+            ]
+            parents: [
+              { name: 'Parent' }
+            ]
+          }
+          {
+            table: 'Parent'
+            fields: [name: 'Id']
+          }
+        ]
+        specs: [
+          name: 'isBaz'
+          table: 'Parent'
+          spec: 'Parent.Id != null'
+        ]
+
+      fnCall = new Node.FunctionCall new Node.Reference(['isBaz']), [new Node.Reference ['Foobar', 'Parent']]
+
+      checked = fnCall.walk new TypeChecker config
+
+      checked.should.have.property 'type', SpecType.Boolean
