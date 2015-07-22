@@ -7,6 +7,18 @@
 
 class TypeChecker
   constructor: (@config) ->
+    @config ?= {}
+    @config.tables ?= []
+    @config.spec ?= []
+
+  hasTable: (needle) ->
+    for table in @config.tables when table.table is needle
+      return yes
+
+  getTable: (needle) ->
+    for table in @config.tables when table.table is needle
+      return table
+    null
 
   walkNullLiteral: ->
     TypeSpecifier.any
@@ -57,5 +69,64 @@ class TypeChecker
       throw new Error "typecheck error: invalid type for disjunction: #{left.toString()} and #{right.toString()}"
 
     TypeSpecifier.boolean
+
+  walkReference: (segments) ->
+    unless segments?.length
+      throw new Error "reference has no segments"
+
+    root = segments[0]
+    unless @hasTable root
+      throw new Error "typecheck error: table not found #{root}"
+
+    table = @getTable root
+    if segments.length is 1
+      return TypeSpecifier.getTable table.table
+
+    @getFieldInTable table, segments[1..]
+
+  getField: (table, needle) ->
+    return null unless table.fields
+    for field in table.fields when field.name is needle
+      return field
+    null
+
+  getParent: (table, needle) ->
+    return null unless table.parents
+    for parent in table.parents when parent.name is needle
+      return parent
+    null
+
+  mapFieldType: (type) ->
+    switch type
+      when 'boolean' then TypeSpecifier.boolean
+      when 'number' then TypeSpecifier.number
+      when 'string' then TypeSpecifier.string
+      when 'date' then TypeSpecifier.date
+      else throw new Error "unknown field type #{type}"
+
+  getFieldInTable: (table, segments) ->
+    unless segments.length
+      throw new Error "reference has no segments"
+
+    if segments.length is 1
+      field = @getField table, segments[0]
+      if field
+        return @mapFieldType field.type
+
+      parent = @getParent table, segments[0]
+      if parent
+        return TypeSpecifier.getTable parent.table
+
+      throw new Error "typecheck error: field not found #{segments[0]}"
+
+    parent = @getParent table, segments[0]
+    unless parent
+      throw new Error "typecheck error: parent table not found #{segments[0]}"
+
+    parentTable = @getTable parentTableName = parent.table or parent.name
+    unless parentTable
+      throw new Error "typecheck error: parent table not found #{parentTableName}"
+
+    @getFieldInTable parentTable, segments[1..]
 
 module.exports = TypeChecker

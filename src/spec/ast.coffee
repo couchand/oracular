@@ -6,6 +6,9 @@ class Reference
   toString: ->
     @segments.join '.'
 
+  walk: (walker) ->
+    walker.walkReference @segments
+
 class StringLiteral
   constructor: (@value) ->
 

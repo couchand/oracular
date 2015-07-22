@@ -235,3 +235,111 @@ describe "TypeChecker", ->
 
       (-> left.walk new TypeChecker()).should.throw /invalid/
       (-> right.walk new TypeChecker()).should.throw /invalid/
+
+  describe "reference", ->
+    checkReferenceType = (fieldTy, specTy) ->
+      config =
+        tables: [
+          table: 'Foobar'
+          fields: [
+            name: "Id", type: fieldTy
+          ]
+        ]
+
+      ref = new Node.Reference ['Foobar', 'Id']
+
+      checked = ref.walk new TypeChecker config
+
+      checked.should.have.property 'type', specTy
+
+    it "gets types from table", ->
+      checkReferenceType 'boolean', SpecType.Boolean
+      checkReferenceType 'number', SpecType.Number
+      checkReferenceType 'string', SpecType.String
+      checkReferenceType 'date', SpecType.Date
+
+    checkParentReferenceType = (fieldTy, specTy) ->
+      config =
+        tables: [
+          {
+            table: 'Parent'
+            fields: [
+              { name: 'Id' }
+              { name: 'Test', type: fieldTy }
+            ]
+          }
+          {
+            table: 'Foobar'
+            fields: [
+              { name: "Id" }
+              { name: "ParentId" }
+            ]
+            parents: [
+              name: 'Parent'
+            ]
+          }
+        ]
+
+      ref = new Node.Reference ['Foobar', 'Parent', 'Test']
+
+      checked = ref.walk new TypeChecker config
+
+      checked.should.have.property 'type', specTy
+
+    it "gets types from parent table", ->
+      checkParentReferenceType 'boolean', SpecType.Boolean
+      checkParentReferenceType 'number', SpecType.Number
+      checkParentReferenceType 'string', SpecType.String
+      checkParentReferenceType 'date', SpecType.Date
+
+    it "expects table to exist", ->
+      ref = new Node.Reference ['Foobar', 'Test']
+
+      (-> ref.walk new TypeChecker()).should.throw /table/
+
+    it "expects field to exist", ->
+      config =
+        tables: [
+          table: 'Foobar'
+          fields: [name: "Id"]
+        ]
+
+      ref = new Node.Reference ['Foobar', 'Test']
+
+      (-> ref.walk new TypeChecker config).should.throw /field/
+
+    it "expects parent to exist", ->
+      config =
+        tables: [
+          table: 'Foobar'
+          fields: [name: "Id"]
+        ]
+
+      ref = new Node.Reference ['Foobar', 'Parent', 'Test']
+
+      (-> ref.walk new TypeChecker config).should.throw /parent/
+
+    it "expects parent field to exist", ->
+      config =
+        tables: [
+          {
+            table: 'Parent'
+            fields: [
+              { name: 'Id' }
+            ]
+          }
+          {
+            table: 'Foobar'
+            fields: [
+              { name: "Id" }
+              { name: "ParentId" }
+            ]
+            parents: [
+              name: 'Parent'
+            ]
+          }
+        ]
+
+      ref = new Node.Reference ['Foobar', 'Parent', 'Test']
+
+      (-> ref.walk new TypeChecker config).should.throw /field/
