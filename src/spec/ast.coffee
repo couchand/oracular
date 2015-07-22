@@ -14,11 +14,17 @@ class StringLiteral
     escaped = escaped.replace /"/g, '\\"'
     '"' + escaped + '"'
 
+  walk: (walker) ->
+    walker.walkStringLiteral @value
+
 class NumberLiteral
   constructor: (@value) ->
 
   toString: ->
     '' + @value
+
+  walk: (walker) ->
+    walker.walkNumberLiteral @value
 
 class BoolLiteral
   constructor: (@value) ->
@@ -26,11 +32,17 @@ class BoolLiteral
   toString: ->
     '' + @value
 
+  walk: (walker) ->
+    walker.walkBooleanLiteral @value
+
 class NullLiteral
   constructor: ->
 
   toString: ->
     'null'
+
+  walk: (walker) ->
+    walker.walkNullLiteral()
 
 OPERATORS = [
   '+', '-', '*', '/'
@@ -57,6 +69,11 @@ class BinaryOperation
 
   toString: ->
     "(#{@left.toString()} #{@operator} #{@right.toString()})"
+
+  walk: (walker) ->
+    left = @left.walk walker
+    right = @right.walk walker
+    walker.walkBinaryOperation @operator, left, right
 
 class NotSpecification
   constructor: (@spec) ->
