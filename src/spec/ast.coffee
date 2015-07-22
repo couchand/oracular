@@ -84,11 +84,21 @@ class LogicalConjunction
   toString: ->
     "(#{@left.toString()} and #{@right.toString()})"
 
+  walk: (walker) ->
+    left = @left.walk walker
+    right = @right.walk walker
+    walker.walkLogicalConjunction left, right
+
 class LogicalDisjunction
   constructor: (@left, @right) ->
 
   toString: ->
     "(#{@left.toString()} or #{@right.toString()})"
+
+  walk: (walker) ->
+    left = @left.walk walker
+    right = @right.walk walker
+    walker.walkLogicalDisjunction left, right
 
 class FunctionCall
   constructor: (@function, @parameters) ->

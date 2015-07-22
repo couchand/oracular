@@ -46,4 +46,16 @@ class TypeChecker
       else
         throw new Error "typecheck error: unknown case: #{op}"
 
+  walkLogicalConjunction: (left, right) ->
+    if left.type isnt SpecType.Boolean or right.type isnt SpecType.Boolean
+      throw new Error "typecheck error: invalid type for conjunction: #{left.toString()} and #{right.toString()}"
+
+    TypeSpecifier.boolean
+
+  walkLogicalDisjunction: (left, right) ->
+    if left.type isnt SpecType.Boolean or right.type isnt SpecType.Boolean
+      throw new Error "typecheck error: invalid type for disjunction: #{left.toString()} and #{right.toString()}"
+
+    TypeSpecifier.boolean
+
 module.exports = TypeChecker

@@ -87,7 +87,7 @@ describe "TypeChecker", ->
       (-> checkOperation '/', number(42), boolean(yes)).should.throw /invalid/
       (-> checkOperation '/', boolean(yes), number(42)).should.throw /invalid/
 
-  describe "logical comparisons", ->
+  describe "logical comparison", ->
     it "works on numbers", ->
       checkOperation '=',  number(1), number(2), SpecType.Boolean
       checkOperation '!=', number(1), number(2), SpecType.Boolean
@@ -159,3 +159,79 @@ describe "TypeChecker", ->
       (-> checkOperation '<=', nullNode, string("foo")).should.throw /invalid/
       (-> checkOperation '>',  nullNode, string("foo")).should.throw /invalid/
       (-> checkOperation '>=', nullNode, string("foo")).should.throw /invalid/
+
+  describe "logical conjunction", ->
+    it "is built from booleans", ->
+      left = boolean yes
+      right = boolean no
+      conjunction = new Node.LogicalConjunction left, right
+
+      checked = conjunction.walk new TypeChecker()
+
+      checked.should.have.property 'type', SpecType.Boolean
+
+    it "errors for numbers", ->
+      num = number 1
+      bool = boolean yes
+
+      left = new Node.LogicalConjunction num, bool
+      right = new Node.LogicalConjunction bool, num
+
+      (-> left.walk new TypeChecker()).should.throw /invalid/
+      (-> right.walk new TypeChecker()).should.throw /invalid/
+
+    it "errors for strings", ->
+      str = string "foobar"
+      bool = boolean yes
+
+      left = new Node.LogicalConjunction str, bool
+      right = new Node.LogicalConjunction bool, str
+
+      (-> left.walk new TypeChecker()).should.throw /invalid/
+      (-> right.walk new TypeChecker()).should.throw /invalid/
+
+    it "errors for nulls", ->
+      bool = boolean yes
+      left = new Node.LogicalConjunction nullNode, bool
+      right = new Node.LogicalConjunction bool, nullNode
+
+      (-> left.walk new TypeChecker()).should.throw /invalid/
+      (-> right.walk new TypeChecker()).should.throw /invalid/
+
+  describe "logical disjunction", ->
+    it "is built from booleans", ->
+      left = boolean yes
+      right = boolean no
+      disjunction = new Node.LogicalDisjunction left, right
+
+      checked = disjunction.walk new TypeChecker()
+
+      checked.should.have.property 'type', SpecType.Boolean
+
+    it "errors for numbers", ->
+      num = number 1
+      bool = boolean yes
+
+      left = new Node.LogicalDisjunction num, bool
+      right = new Node.LogicalDisjunction bool, num
+
+      (-> left.walk new TypeChecker()).should.throw /invalid/
+      (-> right.walk new TypeChecker()).should.throw /invalid/
+
+    it "errors for strings", ->
+      str = string "foobar"
+      bool = boolean yes
+
+      left = new Node.LogicalDisjunction str, bool
+      right = new Node.LogicalDisjunction bool, str
+
+      (-> left.walk new TypeChecker()).should.throw /invalid/
+      (-> right.walk new TypeChecker()).should.throw /invalid/
+
+    it "allows nulls", ->
+      bool = boolean yes
+      left = new Node.LogicalDisjunction nullNode, bool
+      right = new Node.LogicalDisjunction bool, nullNode
+
+      (-> left.walk new TypeChecker()).should.throw /invalid/
+      (-> right.walk new TypeChecker()).should.throw /invalid/
