@@ -27,4 +27,9 @@
       table: "Foobar"
       spec: "Foobar.Type = 'Customer'"
     }
+    {
+      name: "specWithTypeError"
+      table: "Foobar"
+      spec: "Foobar.Id = 42"
+    }
   ]
