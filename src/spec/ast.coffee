@@ -9,6 +9,9 @@ class Reference
   walk: (walker) ->
     walker.walkReference @segments
 
+  walkPreorder: (previous, walker) ->
+    walker.walkReference previous, @segments
+
 class StringLiteral
   constructor: (@value) ->
 
@@ -20,6 +23,9 @@ class StringLiteral
   walk: (walker) ->
     walker.walkStringLiteral @value
 
+  walkPreorder: (previous, walker) ->
+    walker.walkStringLiteral previous, @value
+
 class NumberLiteral
   constructor: (@value) ->
 
@@ -28,6 +34,9 @@ class NumberLiteral
 
   walk: (walker) ->
     walker.walkNumberLiteral @value
+
+  walkPreorder: (previous, walker) ->
+    walker.walkNumberLiteral previous, @value
 
 class BoolLiteral
   constructor: (@value) ->
@@ -38,6 +47,9 @@ class BoolLiteral
   walk: (walker) ->
     walker.walkBooleanLiteral @value
 
+  walkPreorder: (previous, walker) ->
+    walker.walkBooleanLiteral previous, @value
+
 class NullLiteral
   constructor: ->
 
@@ -46,6 +58,9 @@ class NullLiteral
 
   walk: (walker) ->
     walker.walkNullLiteral()
+
+  walkPreorder: (previous, walker) ->
+    walker.walkNullLiteral previous
 
 OPERATORS = [
   '+', '-', '*', '/'
@@ -78,6 +93,12 @@ class BinaryOperation
     right = @right.walk walker
     walker.walkBinaryOperation @operator, left, right
 
+  walkPreorder: (previous, walker) ->
+    next = walker.walkBinaryOperation previous, @operator, @left, @right
+    @left.walkPreorder next, walker
+    @right.walkPreorder next, walker
+    next
+
 class NotSpecification
   constructor: (@spec) ->
 
@@ -92,6 +113,12 @@ class LogicalConjunction
     right = @right.walk walker
     walker.walkLogicalConjunction left, right
 
+  walkPreorder: (previous, walker) ->
+    next = walker.walkLogicalConjunction previous, @left, @right
+    @left.walkPreorder next, walker
+    @right.walkPreorder next, walker
+    next
+
 class LogicalDisjunction
   constructor: (@left, @right) ->
 
@@ -102,6 +129,12 @@ class LogicalDisjunction
     left = @left.walk walker
     right = @right.walk walker
     walker.walkLogicalDisjunction left, right
+
+  walkPreorder: (previous, walker) ->
+    next = walker.walkLogicalDisjunction previous, @left, @right
+    @left.walkPreorder next, walker
+    @right.walkPreorder next, walker
+    next
 
 class FunctionCall
   constructor: (@function, @parameters) ->
@@ -114,6 +147,13 @@ class FunctionCall
     fn = @function.walk walker
     params = (p.walk walker for p in @parameters)
     walker.walkFunctionCall fn, params
+
+  walkPreorder: (previous, walker) ->
+    next = walker.walkFunctionCall previous, @function, @parameters
+    @function.walkPreorder next, walker
+    for param in @parameters
+      param.walkPreorder next, walker
+    next
 
 module.exports = {
   Reference
