@@ -18,7 +18,7 @@ class Sqlizer
   serialize: (root, spec) ->
     tableName = root.table
 
-    select = "[#{tableName}].[#{root.id}]"
+    select = "[#{tableName}].[#{root.id or 'Id'}]"
 
     where = spec.walk @
     joins = (v for k, v of @joins).join '\n'
@@ -134,7 +134,7 @@ class Sqlizer
 
       unless subset of @joins
         @joins[subset] = """
-          LEFT JOIN [#{parent.table}] [#{tableName}] ON [#{tableName}].[#{table.id}] = [#{previous}].[#{parent.id}]
+          LEFT JOIN [#{parent.table}] [#{tableName}] ON [#{tableName}].[#{table.id or 'Id'}] = [#{previous}].[#{parent.id or parent.name + 'Id'}]
           """
     field = @getField table, ref[ref.length-1]
     "[#{tableName}].[#{field.name}]"

@@ -9,6 +9,7 @@ React = require 'react'
 name = React.createFactory require './name'
 table = React.createFactory require './table'
 expressionEditor = React.createFactory require './expression'
+sqlViewer = React.createFactory require './sql'
 
 module.exports = React.createClass
 
@@ -26,3 +27,4 @@ module.exports = React.createClass
       name {spec}
       table {spec}
       expressionEditor {spec}
+      sqlViewer {spec}
