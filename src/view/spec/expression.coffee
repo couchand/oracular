@@ -23,7 +23,7 @@ module.exports = React.createClass
     editing: no
 
   startEditing: (e) ->
-    @setState editing: yes, source: @props.spec.spec
+    @setState editing: yes, source: @props.spec.source
     e?.preventDefault()
 
   save: (e) ->
@@ -71,7 +71,7 @@ module.exports = React.createClass
 
       else
         [
-          @props.spec.spec
+          @props.spec.source
 
           a
             key: "edit-link"

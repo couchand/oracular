@@ -7,7 +7,7 @@ TYPES =
   date: 'date'
 
 class Table
-  constructor: (@table, @parents, @fields) ->
+  constructor: (@table, @id, @parents, @fields) ->
     @key = 'table-' + @table
 
 class Parent
@@ -41,6 +41,8 @@ module.exports = (config) ->
     fields = for field in row.fields
       new Field field.name, field.type
 
-    tables.push new Table row.table, parents, fields
+    id = row.id or 'Id'
+
+    tables.push new Table row.table, id, parents, fields
 
   {tables, errors}

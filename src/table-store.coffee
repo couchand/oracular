@@ -102,12 +102,44 @@ addParent = (table) ->
 
   newParent
 
+loadTables = (newTables) ->
+  newTablesById = {}
+  newFieldsById = {}
+  newParentsById = {}
+
+  for table in newTables
+    table._id = makeId()
+
+    for field in table.fields
+      field._id = makeId()
+      field._table = table
+
+      newFieldsById[field._id] = field
+
+    for parent in table.parents
+      parent._id = makeId()
+      parent._table = table
+
+      newParentsById[parent._id] = parent
+
+    newTablesById[table._id] = table
+
+  tables = newTables
+  tablesById = newTablesById
+  fieldsById = newFieldsById
+  parentsById = newParentsById
+
 module.exports = Reflux.createStore
   init: ->
     @listenToMany actions
 
   getInitialState: ->
     tables
+
+  onLoadConfig: (config) ->
+    loadTables config.tables or []
+
+    @trigger tables
 
   onAddTable: ->
     addTable()

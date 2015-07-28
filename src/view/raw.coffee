@@ -24,7 +24,10 @@ module.exports = React.createClass
   render: ->
     config = elideDefaults
       tables: cleanObjects @state.tables
-      specs: cleanObjects @state.specs
+      specs: cleanObjects @state.specs.map (spec) ->
+        name: spec.name
+        table: spec.table
+        spec: spec.source
 
     serialized = try
       JSON.stringify config, null, 2

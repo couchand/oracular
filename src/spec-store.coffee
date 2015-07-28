@@ -27,12 +27,23 @@ addSpec = (table) ->
     _id: makeId()
     name: nameSpec 'NewSpec'
     table: table
-    spec: 'true'
+    source: 'true'
 
   specsById[newSpec._id] = newSpec
   specs.push newSpec
 
   newSpec
+
+loadSpecs = (newSpecs) ->
+  newSpecsById = {}
+
+  for spec in newSpecs
+    spec._id = makeId()
+
+    newSpecsById[spec._id] = spec
+
+  specs = newSpecs
+  specsById = newSpecsById
 
 module.exports = Reflux.createStore
   init: ->
@@ -40,6 +51,11 @@ module.exports = Reflux.createStore
 
   getInitialState: ->
     specs
+
+  onLoadConfig: (config) ->
+    loadSpecs config.specs or []
+
+    @trigger specs
 
   onAddSpec: (table) ->
     addSpec table
@@ -58,8 +74,8 @@ module.exports = Reflux.createStore
 
     @trigger specs
 
-  onUpdateSpec: (specId, spec) ->
+  onUpdateSpec: (specId, source) ->
     if specId of specsById
-      specsById[specId].spec = spec
+      specsById[specId].source = source
 
     @trigger specs

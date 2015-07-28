@@ -6,6 +6,9 @@ module.exports = Reflux.createActions
 
   # static actions
 
+  loadConfig:
+    sync: yes
+
   addTable:
     sync: yes
 
