@@ -16,9 +16,6 @@ module.exports = React.createClass
 
   name: 'config.tables.list'
 
-  getInitialState: ->
-    tables: []
-
   mixins: [Reflux.connect tableStore, 'tables']
 
   addTable: (e) ->
@@ -39,7 +36,7 @@ module.exports = React.createClass
         tableView {table, key: table._id}
 
       a
-        href: '#'
+        href: '#tables'
         className: 'new-table-link'
         onClick: @addTable
         'add table'

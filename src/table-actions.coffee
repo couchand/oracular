@@ -20,10 +20,24 @@ module.exports = Reflux.createActions
   addField:
     sync: yes
 
+  addParent:
+    sync: yes
+
   # field actions (require field _id)
 
   updateFieldName:
     sync: yes
 
   updateFieldType:
+    sync: yes
+
+  # parent actions (require parent _id)
+
+  updateParentName:
+    sync: yes
+
+  updateParentId:
+    sync: yes
+
+  updateParentTable:
     sync: yes

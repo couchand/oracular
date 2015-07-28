@@ -8,6 +8,7 @@ React = require 'react'
 
 name = React.createFactory require './name'
 fields = React.createFactory require './fields'
+parents = React.createFactory require './parents'
 
 module.exports = React.createClass
 
@@ -23,4 +24,5 @@ module.exports = React.createClass
       className: "table"
 
       name {table}
+      parents {table}
       fields {table}

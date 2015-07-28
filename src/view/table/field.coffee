@@ -5,6 +5,7 @@ React = require 'react'
 {
   tr, td
   a, input
+  select, option
 } = React.DOM
 
 {
@@ -12,6 +13,7 @@ React = require 'react'
 } = require '../util/keys'
 
 {updateId, updateFieldName, updateFieldType} = require '../../table-actions'
+FIELD_TYPES = require '../../field-types'
 
 module.exports = React.createClass
 
@@ -32,6 +34,9 @@ module.exports = React.createClass
 
   handleNameChange: (target: {value: name}) ->
     @setState {name}
+
+  handleTypeChange: (target: {value: type}) ->
+    @setState {type}
 
   isIdField: ->
     @props.table.id is @props.field.name
@@ -83,7 +88,19 @@ module.exports = React.createClass
         else
           @props.field.name
 
-      td {}, @props.field.type
+      td {},
+        if @state.editing
+          select
+            value: @state.type
+            onChange: @handleTypeChange
+            for type in FIELD_TYPES
+              option
+                key: type
+                value: type
+                type
+
+        else
+          @props.field.type
 
       td {},
         if @state.editing

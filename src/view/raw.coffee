@@ -14,9 +14,6 @@ module.exports = React.createClass
 
   name: 'config.raw'
 
-  getInitialState: ->
-    tables: []
-
   mixins: [Reflux.connect tableStore, 'tables']
 
   render: ->
