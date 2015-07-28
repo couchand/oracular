@@ -8,6 +8,7 @@ Reflux = require 'reflux'
 } = React.DOM
 
 cleanObjects = require '../clean-objects'
+elideDefaults = require '../elide-defaults'
 tableStore = require '../table-store'
 
 module.exports = React.createClass
@@ -17,7 +18,7 @@ module.exports = React.createClass
   mixins: [Reflux.connect tableStore, 'tables']
 
   render: ->
-    config =
+    config = elideDefaults
       tables: cleanObjects @state.tables
       specs: []
 
