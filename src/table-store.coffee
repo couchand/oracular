@@ -93,7 +93,13 @@ module.exports = Reflux.createStore
 
   onUpdateName: (tableId, table) ->
     if tableId of tablesById
-      tablesById[tableId].table = table
+      me = tablesById[tableId]
+
+      for other in tables
+        for parent in other.parents when parent.table is me.table
+          parent.table = table
+
+      me.table = table
 
     @trigger tables
 
@@ -117,7 +123,12 @@ module.exports = Reflux.createStore
 
   onUpdateFieldName: (fieldId, name) ->
     if fieldId of fieldsById
-      fieldsById[fieldId].name = name
+      field = fieldsById[fieldId]
+
+      for parent in field._table.parents when parent.id is field.name
+        parent.id = name
+
+      field.name = name
 
     @trigger tables
 
