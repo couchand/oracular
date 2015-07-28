@@ -23,7 +23,7 @@ module.exports = React.createClass
     editing: no
 
   startEditing: (e) ->
-    @setState editing: yes, name: @props.table.name
+    @setState editing: yes, name: @props.table.table
     e?.preventDefault()
 
   save: (e) ->
@@ -60,7 +60,7 @@ module.exports = React.createClass
           a
             key: "a"
             className: "save-link"
-            href: "#table-#{@props.table.name}"
+            href: "#table-#{@props.table.table}"
             onClick: @save
             "save"
         ]
@@ -71,14 +71,14 @@ module.exports = React.createClass
             className: "name"
             key: "header"
             a
-              name: "table-#{@props.table.name}"
-              href: "#table-#{@props.table.name}"
-              @props.table.name
+              name: "table-#{@props.table.table}"
+              href: "#table-#{@props.table.table}"
+              @props.table.table
 
           a
             key: "edit-link"
             className: "edit-link"
-            href: "#table-#{@props.table.name}"
+            href: "#table-#{@props.table.table}"
             onClick: @startEditing
             "edit"
         ]

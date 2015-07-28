@@ -69,7 +69,7 @@ module.exports = React.createClass
     field.name isnt @props.table.id and (field.name not of usedFields or field.name is @state.id)
 
   tableIsValidForParent: (table, usedTables) ->
-    table._id isnt @props.table._id and (table.name not of usedTables or table.name is @state.table)
+    table._id isnt @props.table._id and (table.table not of usedTables or table.table is @state.table)
 
   render: ->
     usedFields = {}
@@ -118,8 +118,8 @@ module.exports = React.createClass
             for table in @state.tables when @tableIsValidForParent table, usedTables
               option
                 key: table._id
-                value: table.name
-                table.name
+                value: table.table
+                table.table
 
         else
           @props.parent.table
@@ -127,12 +127,12 @@ module.exports = React.createClass
       td {},
         if @state.editing
           a
-            href: "#table-#{@props.table.name}"
+            href: "#table-#{@props.table.table}"
             onClick: @save
             "save"
 
         else
           a
-            href: "#table-#{@props.table.name}"
+            href: "#table-#{@props.table.table}"
             onClick: @startEditing
             "edit"

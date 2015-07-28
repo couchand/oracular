@@ -18,7 +18,7 @@ parentsById = {}
 addTable = ->
   newTable =
     _id: makeId()
-    name: 'NewTable'
+    table: 'NewTable'
     id: 'Id'
     parents: []
     fields: []
@@ -48,10 +48,10 @@ pickTable = (table) ->
   for parent in table.parents
     used[parent.table] = yes
 
-  for candidate in tables when candidate._id isnt table._id and candidate.name not of used
+  for candidate in tables when candidate._id isnt table._id and candidate.table not of used
     return candidate
 
-  name: ''
+  table: ''
 
 pickField = (table) ->
   used = {}
@@ -70,9 +70,9 @@ addParent = (table) ->
   newParent =
     _id: makeId()
     _table: table
-    name: myParent.name
+    name: myParent.table
     id: myField.name
-    table: myParent.name
+    table: myParent.table
 
   parentsById[newParent._id] = newParent
   table.parents.push newParent
@@ -91,9 +91,9 @@ module.exports = Reflux.createStore
 
     @trigger tables
 
-  onUpdateName: (tableId, name) ->
+  onUpdateName: (tableId, table) ->
     if tableId of tablesById
-      tablesById[tableId].name = name
+      tablesById[tableId].table = table
 
     @trigger tables
 

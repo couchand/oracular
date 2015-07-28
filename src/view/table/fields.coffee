@@ -44,6 +44,6 @@ module.exports = React.createClass
               field: field
 
       a
-        href: "#table-#{@props.table.name}"
+        href: "#table-#{@props.table.table}"
         onClick: @addField
         "add field"

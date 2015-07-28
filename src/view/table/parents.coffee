@@ -57,6 +57,6 @@ module.exports = React.createClass
 
       if @canAddParent()
         a
-          href: "#table-#{@props.table.name}"
+          href: "#table-#{@props.table.table}"
           onClick: @addParent
           "add parent"

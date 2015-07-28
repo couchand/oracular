@@ -105,12 +105,12 @@ module.exports = React.createClass
       td {},
         if @state.editing
           a
-            href: "#table-#{@props.table.name}"
+            href: "#table-#{@props.table.table}"
             onClick: @save
             "save"
 
         else
           a
-            href: "#table-#{@props.table.name}"
+            href: "#table-#{@props.table.table}"
             onClick: @startEditing
             "edit"
