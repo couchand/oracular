@@ -15,10 +15,21 @@ tablesById = {}
 fieldsById = {}
 parentsById = {}
 
+nameTable = (prefix) ->
+  count = 0
+
+  for table in tables when table.table[...prefix.length] is prefix
+    count += 1
+
+  if count is 0
+    prefix
+  else
+    prefix + (1 + count)
+
 addTable = ->
   newTable =
     _id: makeId()
-    table: 'NewTable'
+    table: nameTable 'NewTable'
     id: 'Id'
     parents: []
     fields: []
