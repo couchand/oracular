@@ -4,7 +4,7 @@ React = require 'react'
 Reflux = require 'reflux'
 
 {
-  div, a
+  div, h1, a
 } = React.DOM
 
 tableStore = require '../table-store'
@@ -28,6 +28,12 @@ module.exports = React.createClass
   render: ->
     div
       className: "tables"
+
+      h1 {},
+        a
+          name: 'tables'
+          href: '#tables'
+          'Tables'
 
       for table in @state.tables
         tableView {table, key: table._id}

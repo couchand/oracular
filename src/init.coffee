@@ -2,10 +2,7 @@
 
 React = require 'react'
 
-tableList = React.createFactory require './view/tables'
-
-tableStore = require './table-store'
+app = React.createFactory require './view/app'
 
 window.render = (el, initialConfig) ->
-  view = tableList()
-  React.render view, el
+  React.render app(), el
