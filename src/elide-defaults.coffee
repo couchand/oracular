@@ -20,6 +20,6 @@ module.exports = (config) ->
 
     nextTable
 
-  specs = []
+  specs = config.specs
 
   {tables, specs}

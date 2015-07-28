@@ -10,17 +10,21 @@ Reflux = require 'reflux'
 cleanObjects = require '../clean-objects'
 elideDefaults = require '../elide-defaults'
 tableStore = require '../table-store'
+specStore = require '../spec-store'
 
 module.exports = React.createClass
 
   name: 'config.raw'
 
-  mixins: [Reflux.connect tableStore, 'tables']
+  mixins: [
+    Reflux.connect tableStore, 'tables'
+    Reflux.connect specStore, 'specs'
+  ]
 
   render: ->
     config = elideDefaults
       tables: cleanObjects @state.tables
-      specs: []
+      specs: cleanObjects @state.specs
 
     serialized = try
       JSON.stringify config, null, 2

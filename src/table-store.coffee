@@ -2,13 +2,8 @@
 
 Reflux = require 'reflux'
 
+makeId = require './make-id'
 actions = require './table-actions'
-
-idsIssued = 0
-makeId = ->
-  newId = idsIssued
-  idsIssued += 1
-  newId
 
 tables = []
 tablesById = {}

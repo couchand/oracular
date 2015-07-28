@@ -7,6 +7,7 @@ React = require 'react'
 } = React.DOM
 
 tableList = React.createFactory require './tables'
+specList = React.createFactory require './specs'
 rawConfig = React.createFactory require './raw'
 
 module.exports = React.createClass
@@ -18,4 +19,5 @@ module.exports = React.createClass
       className: "oracular config"
 
       tableList()
+      specList()
       rawConfig()
