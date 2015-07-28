@@ -24,7 +24,24 @@ nameTable = (prefix) ->
   if count is 0
     prefix
   else
-    prefix + (1 + count)
+    tableNames = tables.map (t) -> t.table
+    while (suggestion = prefix + (1 + count)) in tableNames
+      count += 1
+    suggestion
+
+nameField = (table, prefix) ->
+  count = 0
+
+  for field in table.fields when field.name[...prefix.length] is prefix
+    count += 1
+
+  if count is 0
+    prefix
+  else
+    fieldNames = table.fields.map (f) -> f.name
+    while (suggestion = prefix + (1 + count)) in fieldNames
+      count += 1
+    suggestion
 
 addTable = ->
   newTable =
@@ -46,7 +63,7 @@ addField = (table) ->
   newField =
     _id: makeId()
     _table: table
-    name: ''
+    name: nameField table, 'NewField'
     type: 'string'
 
   fieldsById[newField._id] = newField
