@@ -34,6 +34,10 @@ module.exports = React.createClass
   cancel: ->
     @setState editing: no, name: undefined
 
+  componentWillReceiveProps: (newProps) ->
+    return unless @state.editing
+    @cancel()
+
   update: (target: {value: name}) ->
     @setState {name}
 

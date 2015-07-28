@@ -46,6 +46,10 @@ module.exports = React.createClass
   handleTableChange: (target: {value: table}) ->
     @setState {table}
 
+  componentWillReceiveProps: (newProps) ->
+    return unless @state.editing
+    @cancel()
+
   save: ->
     updateParentName @props.parent._id, @state.name
     updateParentId @props.parent._id, @state.id

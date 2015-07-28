@@ -58,6 +58,10 @@ module.exports = React.createClass
       name: undefined
       type: undefined
 
+  componentWillReceiveProps: (newProps) ->
+    return unless @state.editing
+    @cancel()
+
   setIdField: ->
     updateId @props.table._id, @props.field.name
 
