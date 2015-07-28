@@ -3,7 +3,7 @@
 module.exports = (config) ->
   tables = for table in config.tables
     nextTable =
-      name: table.name
+      table: table.table
       fields: for field in table.fields
         nextField = name: field.name
         nextField.type = field.type unless field.type is 'string'
