@@ -22,7 +22,7 @@ module.exports = (grunt) ->
 
     browserify:
       build:
-        src: ['build/client.js']
+        src: ['build/init.js']
         dest: 'www/script.js'
 
     mochaTest:
