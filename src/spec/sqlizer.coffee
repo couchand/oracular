@@ -8,7 +8,7 @@ escapeString = (str) ->
     .replace /'/g, "\\'"
 
 class Sqlizer
-  constructor: (@config) ->
+  constructor: (@config, @alias) ->
     @config ?= {}
     @config.tables ?= {}
     @config.specs ?= {}
@@ -18,12 +18,12 @@ class Sqlizer
   serialize: (root, spec) ->
     tableName = root.table
 
-    select = "[#{tableName}].[#{root.id or 'Id'}]"
+    select = "[#{@alias or tableName}].[#{root.id or 'Id'}]"
 
     where = spec.walk @
     joins = (v for k, v of @joins).join '\n'
 
-    from = "[#{tableName}]"
+    from = "[#{tableName}] [#{@alias or tableName}]"
 
     """
     SELECT DISTINCT #{select}
@@ -90,14 +90,34 @@ class Sqlizer
     "(#{left} OR #{right})"
 
   walkFunctionCall: (fn, args) ->
-    throw 'up'
+    if @hasSpec fn
+      spec = @getSpec fn
+
+      unless spec?.spec?.walk
+        throw new Error "sql error: spec not parsed"
+
+      unless args.length is 1
+        throw new Error "spec reference has invalid argument count"
+
+      arg = args[0]
+
+      builder = new Sqlizer @config, arg
+      where = spec.spec.walk builder
+
+      for k, v of builder.joins when k not of @joins
+        @joins[k] = v
+
+      where
+
+    else
+      throw new Error "builtins not yet supported"
 
   walkReference: (ref) ->
     unless ref.length
       throw new Error "reference has no segments"
 
     if ref.length is 1 and @hasSpec ref[0]
-      return ""
+      return ref[0]
 
     if ref.length is 1 and ref[0].toLowerCase() of BUILTINS
       return ""
@@ -108,21 +128,26 @@ class Sqlizer
     root = @getTable ref[0]
 
     if ref.length is 1
-      return "[#{root.table}]"
+      return "[#{@alias or root.table}]"
 
     if ref.length is 2
       parent = @getParent root, ref[1]
       if parent
-        return "[#{parent.table}]"
+        table = @getTable parent.table
+        rel = (@alias or root.table) + '.' + parent.name
+        @joins[rel] = """
+          LEFT JOIN [#{parent.table}] [#{rel}] ON [#{rel}].[#{table.id or 'Id'}] = [#{@alias or root.table}].[#{parent.id or parent.name + 'Id'}]
+          """
+        return rel
 
       field = @getField root, ref[1]
       if field
-        return "[#{root.table}].[#{field.name}]"
+        return "[#{@alias or root.table}].[#{field.name}]"
 
       throw new Error "sql error: field not found"
 
     table = root
-    tableName = root.table
+    tableName = @alias or root.table
 
     for index in [1...ref.length-1]
       subset = ref[..index].join '.'

@@ -48,7 +48,17 @@
     {
       name: "hasRecentDeal"
       table: "Account"
-      spec: "TODAY - LAST(Opportunity.CloseDate, Opportunity.IsClosed) < 60"
+      spec: "TODAY - 60 < LAST(Opportunity.CloseDate, Opportunity.IsClosed)"
+    }
+    {
+      name: "isManager"
+      table: "User"
+      spec: "User.Type = 'Manager'"
+    }
+    {
+      name: "managerCustomer2"
+      table: "Account"
+      spec: "Account.Type = 'Customer' AND isManager(Account.Owner)"
     }
     {
       name: "managerCustomer"

@@ -21,6 +21,12 @@ validateReference = (root, tables, node) ->
       for field in tables[root].fields when field.name is node.segments[1]
         foundit = yes
         break
+
+      unless foundit
+        for parent in tables[root].parents when parent.name is node.segments[1]
+          foundit = yes
+          break
+
       if foundit then null else "field '#{node.segments[1]}' not found on '#{root}'"
     else
       foundit = no
