@@ -31,8 +31,12 @@ module.exports = (grunt) ->
       test:
         src: ["test/**/*.coffee"]
 
+    clean:
+      files: ["build", "www/script.js"]
+
+  grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-browserify'
   grunt.loadNpmTasks 'grunt-mocha-test'
 
-  grunt.registerTask 'default', ['mochaTest', 'coffee', 'browserify']
+  grunt.registerTask 'default', ['clean', 'mochaTest', 'coffee', 'browserify']
