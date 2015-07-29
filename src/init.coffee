@@ -5,7 +5,6 @@ React = require 'react'
 app = React.createFactory require './view/app'
 
 configure = require './config'
-configView = React.createFactory require './view/config'
 
 loadTables = require './table-loader'
 loadSpecs = require './spec-loader'
