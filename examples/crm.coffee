@@ -43,7 +43,7 @@
     {
       name: "needsCustomerUpdate"
       table: "Account"
-      spec: "Account.Type = 'Prospect' AND ANY(Opportunity.IsClosed)"
+      spec: "Account.Type = 'Prospect' AND ANY(Opportunity, Opportunity.IsClosed)"
     }
     {
       name: "hasRecentDeal"
