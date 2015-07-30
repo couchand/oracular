@@ -141,7 +141,7 @@ Account.CreatedDate > TODAY
 
 As you can see, a field spec uses a binary boolean-valued operator,
 one of `=`, `!=`, `<`, `<=`, `>`, and `>=`.  In each case,
-where one side is the name of the field (dot-referenced on the root
+one side is the name of the field (dot-referenced on the root
 object), and the other side is a literal of the same type.  In these
 examples we used the string `"Customer"`, the special value `null`
 (meaning no value), and the built-in `TODAY`, which is the current date.
@@ -152,11 +152,15 @@ types.  For instance,
 
 ```coffeescript
 # created in the last 30 days
-TODAY - Account.CreatedDate < 30
+TODAY - 30 < Account.CreatedDate
+
+# total price above the limit
+LineItem.UnitPrice * LineItem.Quantity > 100
 ```
 
-Building on top of this are logical operations on specs: conjunction
-`AND`, disjunction `OR` and negation `NOT()`.  For example,
+Building on this are logical operations on specs: conjunction
+`AND`, disjunction `OR`, negation `NOT()`, and selection `SELECT()`.
+For example,
 
 ```coffeescript
 # not a customer
@@ -164,10 +168,39 @@ NOT(Account.Type = "Customer")
 
 # customer created this month
 Account.Type = "Customer" AND TODAY - Account.CreatedDate < 30
+
+# manager or exec
+User.Type = "Manager" OR User.Type = "Exec"
 ```
 
-References can step through a parent object by dot-referencing it by
-name.  
+This last example could also be replaced by the `IN` operator, which
+checks a field against a list of options:
+
+```coffeescript
+# manager or exec, version 2
+User.Type IN ("Manager", "Exec")
+```
+
+Selection allows you to pick one of two options, which is useful for
+swapping out parts of an expression.  If the first parameter is true,
+the second parameter is checked, and otherwise the last parameter is.
+
+```coffeescript
+# needs customer update
+SELECT(
+  # if the account is a customer
+  Account.Type = "Customer",
+
+  # then check if the last order rolled off
+  LAST(Opportunity.CloseDate, Opportunity.IsWon) < TODAY + 90,
+
+  # else check if a new order rolled on
+  TODAY + 90 < LAST(Opportunity.CloseDate, Opportunity.IsWon)
+)
+```
+
+Field references can step through a record's parent objects by
+dot-referencing the parent relationship by name.
 
 ```coffeescript
 # owner is manager
@@ -177,15 +210,17 @@ Account.Owner.Type = "Manager"
 The most complicated type of expression is a reduction over the child
 objects.  These come in a few flavors: the predicates `ANY()`, `ALL()`,
 and `NONE()`, and the reducers `FIRST()`, `LAST()`, `LARGEST()`, and
-`SMALLEST()`.  The expression contained within performs a join over
-the child records.  Just reference the child record table as if it were
-a root of an expression, and make sure that you include the join
-criteria.  For instance, doing a query over the user table that account
-points to:
+`SMALLEST()`.  They all require at least one parameter, a reference to
+the child table or field to join.  You can also add a second parameter
+for additional criteria on the child object.  For instance, doing a
+query over the user table that account points to:
 
 ```coffeescript
 # manager with a customer
-User.Type = "Manager" AND ANY(Account.Owner = User AND Account.Type = "Customer")
+User.Type = "Manager" AND ANY(Account, Account.Type = "Customer")
+
+# manager with no accounts
+User.Type = "Manager" AND NONE(Account)
 
 # customer with recent deals
 Account.Type = "Customer"
@@ -198,7 +233,15 @@ Account.Type = "Customer"
 LARGEST(Opportunity.Amount, Opportunity.IsClosed) > 100000
 ```
 
-If this were the only tool we had our specifications would grow large
+As you can see, for the predicates `ANY`, `ALL` and `NONE` you just
+reference the child table directly.  The date reducers `FIRST` and
+`LAST` require a reference to a date field on the child record, and the
+numeric reducers `LARGEST` and `SMALLEST` require a child's number
+field.  The child table specified must have a parent relationship to
+the root table of the specification, and this relationship is used to
+construct the natural join.
+
+If these were the only tools we had our specifications would grow large
 quickly -- business logic tends to be pretty messy.  Fortunately, we
 also have a tool for abstraction: since every spec has a name, you can
 refer to one spec from another.  For instance, we could define:
@@ -232,6 +275,27 @@ This way we can break down the business logic into little testable bits.
 As you can see, the joins are automatically made based on the defined
 relationships.  It is an error to define on a table more than one parent
 relationship to any given table.
+
+### higher-order specs
+
+It would be great to add support for higher-order spec handling.  For
+instance, the above example `managersWithCustomers` could be rewritten
+as `isManager AND ANY(isCustomer)`.  Since the `isManager` spec has the
+same root table as the current spec, we know it means `isManager(User)`,
+and since `isCustomer`'s root table has a parent relationship to the
+root of the current spec, we know the `ANY` should join on that.
+
+This would also be quite useful for `SELECT`:
+
+```coffeescript
+SELECT(isCustomer(Account), customerSpec(Account), nonCustomerSpec(Account))
+```
+
+versus
+
+```coffeescript
+SELECT(isCustomer, customerSpec, nonCustomerSpec)
+```
 
 lowering
 --------
