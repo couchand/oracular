@@ -9,7 +9,9 @@ a query builder
     * tables
     * specs
     * specification language
+    * higher-order specs
   * lowering
+  * the name
 
 [![Build Status](https://travis-ci.org/couchand/oracular.svg?branch=master)](https://travis-ci.org/couchand/oracular)
 
@@ -321,5 +323,13 @@ The result being all the Accounts in the database that match the spec.
 By lowering the spec to SQL we can use specs for batch processing and
 scheduled tasks, and we can also use it to assist in development, by
 showing the records matching a spec right in the interface.
+
+the name
+--------
+
+The 12 July 2015 Washington Post crossword puzzle had the clue
+*Prophetic* for 35 down.  The crosses made it clear they were looking
+for the uncommon construction **oracular**, so that word was on my mind
+when I was looking for a name for a query builder.
 
 ##### ╭╮☲☲☲╭╮ #####
